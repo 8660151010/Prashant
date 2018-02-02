@@ -1,0 +1,136 @@
+1> Ceate Table and Instert value in table
+2> Create Empty Mvc Projrct
+	(for ex:- WealthManagementSystem)
+3> Create new project in Visual Studio 2015
+	i>  Go to File-> New-> Project -> Web-> ASP.NET MVC4 Web Application-> Entry Application Name-> OK.
+       ii> Select a template-> Empty-> add MVC folder-> OK.
+4> Add Entity Data Model
+	i>  Right Click on Models Folder-> Add -> Visual C# -> Data-> ADO.NET Entity data Model-> Entry Name-> OK.
+	ii> Entity Data Model wizard -> Select EF Designer from Database-> Next.
+	iii> Choose your data connection-> Click New Connection.
+	iv> Enter your Server name-> Choose your authentication. I am using SQL Server authentication, so we need to provide the username and password-> 	    Select your database-> Test Connection-> OK.
+	v> Click Yes-> includes the sensitive data in the connection string->next->Choose version of Entity framework.
+	vi> Include Database objects to your model-> Finish.
+
+5> Build the project and add the Controller.
+	Select MVC5 Controller Empty-> Add -> Write Controller Name-> Add.
+
+	 public class LoginController : Controller
+    {
+        LoginEntities loginEntities = new LoginEntities();
+        string message = string.Empty;
+        // GET: Login
+        public ActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Login(tblLogin login)
+        {
+            if(ModelState.IsValid)
+            {
+                var data = loginEntities.tblLogins.Any(x => x.UserName == login.UserName && x.Password == login.Password);
+                if (data)
+                {
+                    message = "Success Login";
+                }
+                else
+                    message = "Login Fialed";
+                
+            }
+            ViewBag.Message = message;
+            return View(login);
+        }
+    }
+
+6> Step 5 Now we need to add the view.
+	i> Click right button on Index Action Method-> Add View.
+	ii> Choose Template, Model class, Data context class.
+	iii> The following is the view code, which displays the login details.
+
+	@model WealthManagementSystem.Models.tblLogin
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login Page</title>
+    <style type="text/css">
+        body {
+            font-family: Arial;
+            font-size: 10pt;
+        }
+
+        table {
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+        }
+
+            table th {
+                background-color: #F7F7F7;
+                color: #333;
+                font-weight: bold;
+            }
+
+            table th, table td {
+                padding: 5px;
+                border: 1px solid #ccc;
+            }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+@using (@Html.BeginForm())
+{
+    <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <th colspan="3">
+                Login
+            </th>
+        </tr>
+        <tr>
+            <td>
+                Username
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.UserName)
+            </td>
+            <td>
+                @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "error" })
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Password
+            </td>
+            <td>
+                @Html.PasswordFor(m => m.Password)
+            </td>
+            <td>
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "error" })
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" value="Login" />
+        @ViewBag.Message
+        </td>
+        <td></td>
+
+        </tr>
+    </table>
+}
+</body>
+</html>
+
+	
